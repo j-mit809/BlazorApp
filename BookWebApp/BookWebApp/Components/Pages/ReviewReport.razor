@@ -1,0 +1,73 @@
+﻿@page "/ReviewReport"
+
+<PageTitle>Review Report</PageTitle>
+
+<h1>Review Report</h1>
+
+@if (errorMessage != null)
+{
+    <p style="color:red">@errorMessage</p>
+}
+
+@if (reviewList != null && reviewList.Count > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                @foreach (var header in headers)
+                {
+                    <th>@header</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var review in reviewList)
+            {
+                <tr>
+                    @foreach (var reviewDetail in review)
+                    {
+                        <td>@reviewDetail</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No reviews available.</p>
+}
+
+@code {
+    private List<string[]> reviewList = new();
+    private string[] headers;
+    private string errorMessage = null;
+
+
+    protected override void OnInitialized()
+    {
+        var filepath = Path.Combine(Environment.CurrentDirectory, "Data", "TestData.csv");
+
+        try
+        {
+
+            string[] lines = File.ReadAllLines(filepath);
+
+
+            headers = lines[0].Split(',');
+
+
+            for (int i = 1; i < lines.Length; i++)
+            {
+
+                string[] reviewInfo = lines[i].Split(',');
+                reviewList.Add(reviewInfo);
+            }
+        }
+        catch (Exception ex)
+        {
+
+            errorMessage = "Error: " + ex.Message;
+        }
+    }
+}
